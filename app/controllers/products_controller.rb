@@ -26,10 +26,17 @@ class ProductsController < ApplicationController
     product = Product.new(
       name: params[:name],
       price: params[:price],
-      image_url: params[:image_url],
       description: params[:description],
+      supplier_id: params[:supplier_id],
+      quantity: params[:quantity]
     )
     if product.save
+      if params[:url]
+        Image.create(
+          url: params[:url],
+          product_id: product.id
+        )
+      end
       render json: product
     else
       render json: {errors: product.errors.full_messages}, status: :unprocessable_entity
@@ -45,7 +52,6 @@ class ProductsController < ApplicationController
     product = Product.find_by(id: params[:id])
     product.name = params[:name] || product.name
     product.price = params[:price] || product.price
-    product.image_url = params[:image_url] || product.image_url
     product.description = params[:description] || product.description
     if product.save
       render json: product
