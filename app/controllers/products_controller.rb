@@ -5,6 +5,11 @@ class ProductsController < ApplicationController
   def index
     products = Product.all
 
+    if params[:category]
+      category = Category.find_by("name iLIKE ?", params[:category])
+      products = category.products
+    end
+
     # if params[:search]
     #   products = products.where("name LIKE ?", "%#{params[:search]}%")
     # end
@@ -21,7 +26,7 @@ class ProductsController < ApplicationController
     #   products = products.order(id: :asc)
     # end
 
-    render json: products
+    render json: products.order(:id)
   end
 
   def create
